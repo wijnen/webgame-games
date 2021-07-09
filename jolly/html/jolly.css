@@ -1,0 +1,29 @@
+.button, .card {
+	background: #882;
+	text-align: center;
+	font-size: 30pt;
+	font-family: sans-serif;
+}
+
+.value {
+	font-size: 25pt;
+	font-family: sans-serif;
+}
+
+.ship {
+	text-align: right;
+	font-size: 200pt;
+	font-family: sans-serif;
+}
+
+.button {
+	border: 2px black solid;
+}
+
+.selected {
+	border: 8px cyan solid;
+}
+
+.selected.wildcard {
+	border: 8px black solid;
+}

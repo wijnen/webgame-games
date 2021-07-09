@@ -1,0 +1,17 @@
+.playername {
+	background: white;
+	padding: .5ex 1ex;
+}
+.turn {
+	background: #ff4;
+}
+.owner {
+	background: #f84;
+}
+.background {
+	background: url(background.svg);
+}
+#state {
+	background: white;
+	padding: .5ex 1ex;
+}

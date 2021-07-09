@@ -1,0 +1,258 @@
+# Frank's Zoo card game
+# Copyright (C) 2020 Bas Wijnen
+# This file is distributed under the same license as the zoo package.
+# Bas Wijnen <wijnen@debian.org>, 2020
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1\n"
+"Report-Msgid-Bugs-To: wijnen@debian.org\n"
+"POT-Creation-Date: 2020-04-20 10:30+0200\n"
+"PO-Revision-Date: 2020-04-09 13:55+0200\n"
+"Last-Translator: Bas Wijnen <wijnen@debian.org>\n"
+"Language-Team: Dutch <NL@li.org>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. The language name of the translation, for the dropdown selection
+#: standaardinvoer:2
+msgid "Zoo"
+msgstr "Dierentuin"
+
+#: standaardinvoer:2
+msgid "Language Name"
+msgstr "Nederlands"
+
+#: html/zoo.js:98
+msgid "Can only trade two cards"
+msgstr "Je moet precies twee kaarten ruilen"
+
+#. Not allowed.
+#: html/zoo.js:133
+msgid "You cannot play this card"
+msgstr "Deze kaart kan je niet spelen"
+
+#: html/zoo.js:208
+msgid "You cannot play cards on the table at the moment"
+msgstr "Je bent niet aan de beurt om kaarten op tafel te leggen"
+
+#: html/zoo.js:212
+msgid "Trade needs exactly two cards"
+msgstr "Je moet precies twee kaarten ruilen"
+
+#: html/zoo.js:232
+msgid "trade needs exactly two cards"
+msgstr "Je moet precies twee kaarten ruilen"
+
+#: html/zoo.js:378
+msgid "The game has ended"
+msgstr "Het spel is afgelopen"
+
+#: html/zoo.js:385
+msgid "Please give two cards to $1"
+msgstr "Geef twee kaarten aan $1"
+
+#: html/zoo.js:387
+msgid "Please play two cards into your score pile"
+msgstr "Speel twee kaarten in je eigen aflegstapel"
+
+#: html/zoo.js:391
+msgid "$1 asks if you can complete their cards"
+msgstr "$1 vraagt of je kaarten wilt bijleggen"
+
+#: html/zoo.js:395
+msgid "It is your turn to play (you may ask $1 for help)"
+msgstr "Je bent aan de beurt (je mag $1 om hulp vragen)"
+
+#: html/zoo.js:399
+msgid "It is your turn to play"
+msgstr "Je bent aan de beurt"
+
+#: html/zoo.js:415
+msgid "Waiting for trade or discard from: $1"
+msgstr "Wachten op ruilen of afleggen: $1"
+
+#: html/zoo.js:417
+msgid "Waiting for trade from: $1"
+msgstr "Wachten op ruilen: $1"
+
+#: html/zoo.js:423
+msgid "Waiting for player to connect"
+msgstr "Wachten op verbinding"
+
+#: html/zoo.js:425
+msgid "It's $1's turn"
+msgstr "$1 is aan de beurt"
+
+#: html/zoo.js:432
+msgid "(Waiting for this player to connect)"
+msgstr "(Wachten op verbinding)"
+
+#: html/zoo.js:433
+msgid " (my partner) "
+msgstr " (mijn partner) "
+
+#: html/zoo.js:433
+msgid " (partner of $1) "
+msgstr " (partner van $1) "
+
+#. }}}
+#. {{{
+#: html/zoo.js:617
+msgid "Game ended:\n"
+msgstr "Het spel is afgelopen:\n"
+
+#. }}}
+#. {{{
+#: html/zoo.js:626
+msgid "This round's scores:"
+msgstr "Scores van deze ronde:"
+
+#: html/zoo.js:629
+msgid ", partner: $1"
+msgstr ", partner: $1"
+
+#: html/zoo.js:630
+msgid " (self: $1$2, lions: $3, hedgehog: $4)"
+msgstr " (zelf: $1$2, leeuwen: $3, egel: $4)"
+
+#: zoo.gpy:111
+msgid "invalid argument(s): $1"
+msgstr "ongeldig(e) argument(en): $1"
+
+#: zoo.gpy:119
+msgid "invalid cards"
+msgstr "ongeldige kaarten"
+
+#: zoo.gpy:124
+msgid "no mosquito"
+msgstr "geen mug"
+
+#: zoo.gpy:127
+msgid "no joker"
+msgstr "geen joker"
+
+#: zoo.gpy:130
+msgid "not enough cards"
+msgstr "niet genoeg kaarten"
+
+#: zoo.gpy:143
+msgid "You cannot request help on the first turn"
+msgstr "Ja kan niet in de eerste ronde om hulp vragen"
+
+#: zoo.gpy:146
+msgid "You cannot request help without offering a card"
+msgstr "Ja kan niet om hulp vragen zonder iets aan te bieden"
+
+#: zoo.gpy:157 zoo.gpy:161
+msgid "You can only ask help if you need cards"
+msgstr "Je kan alleen om hulp vragen als je kaarten nodig hebt"
+
+#: zoo.gpy:164
+msgid "You cannot play these cards"
+msgstr "Deze kaarten kan je niet spelen"
+
+#: zoo.gpy:175
+msgid "must play a (non-joker) card"
+msgstr "er moet een kaart worden gespeeld (anders dan joker)"
+
+#: zoo.gpy:180
+msgid "cannot play lone joker"
+msgstr "joker kan niet alleen gespeeld worden"
+
+#: zoo.gpy:189
+msgid "incorrect number of same cards"
+msgstr "onjuist aantal gelijke kaarten"
+
+#: zoo.gpy:194
+msgid "invalid card"
+msgstr "foute kaart"
+
+#: zoo.gpy:197
+msgid "incorrect number of other cards"
+msgstr "onjuist aantal andere kaarten"
+
+#: zoo.gpy:352
+msgid "invalid help response"
+msgstr "ongeldig hulp-antwoord"
+
+#: zoo.gpy:369
+msgid "invalid new card"
+msgstr "ongeldige nieuwe kaart"
+
+#: zoo.gpy:376
+msgid "you need to play at least one elephant"
+msgstr ""
+
+#: zoo.gpy:379
+#, fuzzy
+msgid "you can only play the same card type"
+msgstr "Deze kaarten kan je niet spelen"
+
+#: zoo.gpy:382
+msgid "mosquito is only allowed with elephants"
+msgstr ""
+
+#: zoo.gpy:385
+msgid "only one extra mosquito allowed"
+msgstr ""
+
+#: zoo.gpy:388
+#, fuzzy
+msgid "trying to play negative number of cards"
+msgstr "onjuist aantal gelijke kaarten"
+
+#: zoo.gpy:391
+#, fuzzy
+msgid "you don't have a mosquito"
+msgstr "geen nieuwe mug"
+
+#: zoo.gpy:394
+msgid "you don't have a joker"
+msgstr ""
+
+#: zoo.gpy:397
+msgid "trying to play more cards than you have"
+msgstr ""
+
+#: zoo.gpy:403
+#, fuzzy
+msgid "Wrong card type"
+msgstr "fout kaarttype"
+
+#: zoo.gpy:408
+#, fuzzy
+msgid "Wrong number of cards"
+msgstr "onjuist aantal gelijke kaarten"
+
+#: zoo.gpy:441
+msgid "invalid call to trade"
+msgstr "ongeldig ruilcommando"
+
+#: zoo.gpy:444
+msgid "invalid cards in trade"
+msgstr "ongeldige ruilkaarten"
+
+#: zoo.gpy:447
+msgid "Player does not have cards"
+msgstr "Speler heeft geen kaarten"
+
+#~ msgid "Round ended"
+#~ msgstr "De ronde is afgelopen"
+
+#~ msgid "duplicate extra card"
+#~ msgstr "dubbele extra kaart"
+
+#~ msgid "not enough new cards"
+#~ msgstr "niet genoeg nieuwe kaarten"
+
+#~ msgid "no new joker"
+#~ msgstr "geen nieuwe joker"
+
+#~ msgid "no new cards"
+#~ msgstr "geen nieuwe kaarten"
+
+#~ msgid "invalid new play"
+#~ msgstr "ongeldig nieuw commando"

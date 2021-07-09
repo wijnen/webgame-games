@@ -1,0 +1,14 @@
+.card {
+	border: solid black 1px;
+	border-radius: 1ex;
+	padding: 1ex 1ex 1ex 1ex;
+	box-sizing: border-box;
+}
+
+.card.back {
+	background: brown;
+}
+
+.card.front {
+	background: white;
+}

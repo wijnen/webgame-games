@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+
+import webgame_client
+
+class AI:
+	def update(self):
+		pass
+	def Private_update(self, changes):
+		if 'actions' not in changes:
+			return
+		if Private.actions.move:
+			cards = list(range(len(Public.cards[0])))
+			cards.sort(key = lambda n: Public.cards[0][n][1])
+			game.move(0, cards[4])
+			game.move(0, cards[2])
+			game.done()
+		elif Private.actions.choose:
+			value = [sum(c[1] for c in Public.cards[side]) for side in range(2)]
+			game.choose(0 if value[0] > value[1] else 1)
+		elif Private.actions.select:
+			cards = list(range(len(Public.cards[0])))
+			cards.sort(key = lambda n: Public.cards[0][n][1])
+			for c in cards:
+				if Public.ship[Public.cards[0][c][0]].owner == mynum:
+					game.select(c)
+					game.cash()
+				else:
+					game.select(c)
+					game.crew(Public.cards[0][c][0])
+			game.done()
+
+run()

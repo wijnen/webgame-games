@@ -1,0 +1,176 @@
+import random
+
+num_players = (1, None)
+
+l = 24
+w = 12
+
+class Game:
+	def run(self):
+		self.Public.room = [[None for x in range(l)] for y in range(w)]
+		self.num_alive = len(self.Public.players)
+		patterns = (((0, 0), (2, 2)), ((0, 0), (1, 1)), ((2, 2), (1, 1)),
+			((1, 0), (1, 2)), ((1, 0), (1, 1)), ((1, 2), (1, 1)),
+			((0, 1), (2, 1)), ((0, 1), (1, 1)), ((2, 1), (1, 1)),
+			((2, 0), (0, 2)), ((2, 0), (1, 1)), ((0, 2), (1, 1)))
+		for y in range(0, w, 3):
+			for x in range(0, l, 3):
+				pattern = random.choice(patterns)
+				for dx, dy in pattern:
+					if x + dx >= l or y + dy >= w:
+						continue
+					self.Public.room[y + dy][x + dx] = 'wall'
+		self.Public.monster = []
+		for p, player in enumerate(self.Public.players):
+			while True:
+				x = random.randrange(l)
+				y = random.randrange(w)
+				if self.Public.room[y][x] is not None:
+					continue
+				player.pos = [x, y]
+				self.Public.room[y][x] = p
+				break
+			player.egg = None
+			player.score = 0
+			player.dead = False
+		while True:
+			alive = [p for p, player in enumerate(self.Public.players) if not player.dead]
+			cmd = (yield {('move', 'ii'): alive, ('egg', ''): alive})
+			p = cmd['player']
+			player = self.Public.players[cmd['player']]
+			if player.dead:
+				# Player has died while we were yielding. This is not an error. Ignore the command.
+				continue
+			if cmd['command'] == 'move':
+				dx, dy = cmd['args']
+				new_pos = [player.pos[0] + dx, player.pos[1] + dy]
+				if not 0 <= new_pos[0] < l or not 0 <= new_pos[1] < w:
+					self.reply(_('You cannot move outside the room'))
+					continue
+				if self.Public.room[new_pos[1]][new_pos[0]] is not None:
+					self.reply(_('That space is not empty'))
+					continue
+				if player.egg == player.pos:
+					self.Public.room[player.pos[1]][player.pos[0]] = ('egg', p)
+				else:
+					self.Public.room[player.pos[1]][player.pos[0]] = None
+				self.Public.room[new_pos[1]][new_pos[0]] = p
+				player.pos = new_pos
+			else:
+				if player.egg is not None:
+					self.reply(_('You cannot create a new egg yet'))
+					continue
+				# Create the monster.
+				self.launch(self.monster(p), 'monster %d' % p)
+				# Allow a new egg after some time.
+				self.launch(self.recharge(p), 'recharge %d' % p)
+
+	def die(self, p):
+		log('player %d died' % p)
+		player = self.Public.players[p]
+		player.dead = True
+		if player.egg == player.pos:
+			self.Public.room[player.pos[1]][player.pos[0]] = ('egg', p)
+		else:
+			self.Public.room[player.pos[1]][player.pos[0]] = None
+		self.broadcast.death(p, player.score)
+		self.num_alive -= 1
+	
+	def check_end(self):
+		if self.num_alive >= (1 if len(self.players) == 1 else 2):
+			return None
+		scores = [(p, player.score) for p, player in enumerate(self.Public.players)]
+		scores.sort(key = lambda s: (-s[1], s[0]))
+		self.stop_all_tasks()
+		return scores
+
+	def recharge(self, p):
+		yield 20
+		self.Public.players[p].egg = None
+
+	def monster(self, p):
+		player = self.Public.players[p]
+		player.egg = player.pos[:]
+		self.Public.monster.append({'player': p, 'pos': player.egg, 'crack': False, 'dead': False})
+		monster = self.Public.monster[-1]
+		yield 5
+		monster.crack = True
+		yield 1
+		# The egg is no longer in the room, but the player cannot create a new egg yet.
+		player.egg = True
+		if player.pos == monster.pos:
+			# Player did not move away in time: die.
+			self.die(p)
+			scores = self.check_end()
+			if scores is not None:
+				return scores
+		if not player.dead:
+			player.score += 1
+		monster.crack = None
+		self.Public.room[monster.pos[1]][monster.pos[0]] = ('monster', p)
+		def accessible(pos):
+			if not 0 <= pos[0] < l or not 0 <= pos[1] < w:
+				return False
+			target = self.Public.room[pos[1]][pos[0]]
+			if target is None:
+				return True
+			if isinstance(target, int):
+				if self.Public.players[target].pos == self.Public.players[target].egg:
+					return False
+				return True
+			return False
+		while True:
+			yield .5 + random.random()
+			dirs = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+			new_pos = [[monster.pos[0] + dx, monster.pos[1] + dy] for dx, dy in dirs]
+			new_pos = [pos for pos in new_pos if accessible(pos)]
+			if len(new_pos) == 0:
+				# There is nowhere to move. Die.
+				self.Public.room[monster.pos[1]][monster.pos[0]] = None
+				monster.dead = True
+				# Award points for killing the monster.
+				new_pos = [[monster.pos[0] + dx, monster.pos[1] + dy] for dx, dy in dirs]
+				for pos in new_pos:
+					if not 0 <= pos[0] < l or not 0 <= pos[1] < w:
+						# Screen edge: no points to award.
+						continue
+					target = self.Public.room[pos[1]][pos[0]]
+					if isinstance(target, str):
+						# Wall, no points to award.
+						continue
+					if isinstance(target, int):
+						# Player standing on their own egg.
+						points = 3, target
+					elif target[0] == 'egg':
+						# Player's egg.
+						points = 2, target[1]
+					elif target[0] == 'monster':
+						# Other monster.
+						points = 1, target[1]
+					else:
+						raise AssertionError('This should never be reached')
+					# Killing your own monsters is only worth points in a single player game.
+					if points[1] != p or len(self.players) == 1:
+						self.Public.players[points[1]].score += points[0]
+				return
+			new_pos = random.choice(new_pos)
+			target = self.Public.room[new_pos[1]][new_pos[0]]
+			if isinstance(target, int):
+				# If the player is standing on an egg, fail to move there.
+				if self.Public.players[target].pos == self.Public.players[target].egg:
+					continue
+				# Kill this player.
+				self.die(target)
+				if not player.dead:
+					player.score += 5
+				scores = self.check_end()
+				if scores is not None:
+					return scores
+			elif target is not None:
+				# Trying to move into a wall or other monster; skip this move instead.
+				continue
+			self.Public.room[monster.pos[1]][monster.pos[0]] = None
+			self.Public.room[new_pos[1]][new_pos[0]] = ('monster', p)
+			monster.pos = new_pos
+
+# vim: set filetype=python foldmethod=marker :

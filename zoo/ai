@@ -1,0 +1,92 @@
+#!/usr/bin/python3
+
+# Possible actions:
+# play(card, num, joker, mug)	cards to play. if not enough, ask for help.
+# help(card, num, joker, mug)	cards to add.
+# trade(card1, card2)		cards to trade or drop
+
+import webgame_client
+import time
+import random
+import fhs
+
+OLIFANT = 10
+MUG = 11
+JOKER = 12
+
+fhs.option('wait', 'wait time for turn', default = 1.)
+config = fhs.init()
+
+class AI:
+	def update(self):
+		# This is defined to silence warnings.
+		pass
+	def Private_update(self, changes):
+		if 'actions' not in changes:
+			return
+		if 'play' in Private.actions:
+			time.sleep(config['wait'])
+			num = Public.current[1] + (1 if Public.current[2] else 0) + (1 if Public.current[3] else 0)
+			if num == 0:
+				# There are no cards; start a new trick.
+				card = 0
+				while True:
+					c = random.randrange(len(Public.cardnames))
+					if Private.hand[c] > 0:
+						game.play(c, Private.hand[c], c == OLIFANT and Private.hand[MUG] > 0, Private.hand[JOKER] > 0)
+						break
+			else:
+				# There is a trick on the table.
+				have_joker = Private.hand[JOKER] > 0
+				have_mug = Private.hand[MUG] > 0 and Public.current[0] == OLIFANT
+				have_extra = (1 if have_joker else 0) + (1 if have_mug else 0)
+				# Try to lose as many cards as possible, so prefer to play same type.
+				if Private.hand[Public.current[0]] + have_extra > num:
+					# Play the same type of cards that was played.
+					if num >= 2 or have_extra < 2:
+						# We can play all the extra cards we have.
+						game.play(Public.current[0], num - have_extra + 1, have_mug, have_joker)
+					else:
+						# We have a mug and a joker, but only one can be played. Play the mug.
+						game.play(Public.current[0], num, True, False)
+				else:
+					# Same card cannot be played. Try other.
+					for other in Public.cards[Public.current[0]].under:
+						have_mug = Private.hand[MUG] > 0 and other == OLIFANT
+						have_extra = (1 if have_joker else 0) + (1 if have_mug else 0)
+						if Private.hand[other] > 0 and Private.hand[other] + have_extra >= num:
+							if num > have_extra:
+								game.play(other, num - have_extra, have_mug, have_joker)
+								break
+							elif num == 1 or have_extra == 0:
+								game.play(other, num, False, False)
+								break
+							elif have_mug:
+								game.play(other, num - 1, True, False)
+								break
+							else:
+								game.play(other, num - 1, False, True)
+								break
+					else:
+						game.play(0, 0, False, False)
+		elif 'help' in Private.actions:
+			'''What to do when asked for help.'''
+			time.sleep(config['wait'])
+			# Never help.	FIXME: should always help as much as possible.
+			game.help(0, 0, False, False)
+		elif 'trade' in Private.actions:
+			'''We must give away or drop two cards.'''
+			time.sleep(config['wait'])
+			cards = []
+			while len(cards) < 2:
+				pick = random.randrange(len(Public.cardnames))
+				if Private.hand[pick] > (1 if pick in cards else 0):
+					cards.append(pick)
+			game.trade(*cards)
+
+	def score_round(self, delta):
+		pass
+	def received(self, card1, card2):
+		pass
+
+run()
