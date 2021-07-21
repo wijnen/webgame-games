@@ -6,19 +6,19 @@
 
 jolly.viewport = [-5, -5, 7, 5];
 
-var jolly.y_ship = 0;
-var jolly.chest = [null, null];
-var jolly.wild;
+jolly.y_ship = 0;
+jolly.chest = [null, null];
+jolly.wild;
 
-function jolly.playercolor(n) {
+jolly.playercolor = function(n) {
 	return ['white', 'black'][n];
 }
 
-function jolly.init2d() {
+jolly.init2d = function() {
 	jolly.wild = 'black';
 }
 
-function jolly.init3d() {
+jolly.init3d = function() {
 	jolly.wild = '#444';
 	color_texture(null, 'color-' + jolly.wild, jolly.wild);
 	for (var i = 0; i < 2; ++i) {
@@ -28,7 +28,7 @@ function jolly.init3d() {
 	}
 }
 
-function jolly.update_card(card, ship) {
+jolly.update_card = function(card, ship) {
 	var fg, bg;
 	if (ship !== null && card[0] != ship) {
 		bg = jolly.wild;
@@ -246,11 +246,11 @@ jolly.ui = {
 	}
 };
 
-function jolly.select_ship(src, ship) {
+jolly.select_ship = function(src, ship) {
 	game('crew', ship);
 }
 
-function jolly.update() {
+jolly.update = function() {
 	if (Private.actions.move)
 		set_state(_('Choose how to divide the cards and click done when ready'));
 	else if (Private.actions.choose)

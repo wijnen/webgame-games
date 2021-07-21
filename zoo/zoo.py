@@ -2,11 +2,11 @@
 # Rules are not included here. They may be available online.
 # If you buy the card game, you also get the rules, of course.
 
-import sys
 import random
 
-num_players = (3, 7)
-num_demo_players = (3, 7)
+name = "Frank's Zoo"
+num_players = tuple(range(3, 8))
+#num_demo_players = (3, 7)
 
 cardnames = [ 'sardines', 'perch', 'seal', 'crocodile', 'polar bear', 'whale', 'mouse', 'hedgehog', 'fox', 'lion', 'elephant', 'mosquito', 'joker' ]
 cards = [ # {{{
