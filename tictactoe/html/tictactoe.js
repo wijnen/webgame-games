@@ -5,9 +5,9 @@ game.ui = {
 		size: [1, 1, 50, 50],
 		image: function(src, y, x) {
 			if (src === null)
-				return game.img.empty();
+				return game.image.empty();
 			else
-				return game.img['player' + src]();
+				return game.image['player' + src]();
 		},
 		location: [-1, -1, 0],
 		offset: [[0, 1, 0], [1, 0, 0]],
