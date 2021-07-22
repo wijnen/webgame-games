@@ -1,21 +1,21 @@
-tictactoe.viewport = [-2, -2, 2, 2];
+game.viewport = [-2, -2, 2, 2];
 
-tictactoe.ui = {
+game.ui = {
 	'board.*.*': {
 		size: [1, 1, 50, 50],
 		image: function(src, y, x) {
 			if (src === null)
-				return 'empty.svg';
+				return game.img.empty();
 			else
-				return 'player' + src + '.svg';
+				return game.img['player' + src]();
 		},
 		location: [-1, -1, 0],
 		offset: [[0, 1, 0], [1, 0, 0]],
-		click: function(src, y, x) { game('play', y, x); }
+		click: function(src, y, x) { server('play', y, x); }
 	}
 };
 
-tictactoe.update = function() {
+game.update = function() {
 	if (Public.ended)
 		set_state(_('The game has ended'));
 	else if (Public.turn == my_num)
@@ -24,7 +24,7 @@ tictactoe.update = function() {
 		set_state(_('Please wait for your turn'));
 }
 
-tictactoe.end = function(winner) {
+game.end = function(winner) {
 	if (my_num == winner)
 		show_chat(null, _('You won!'));
 	else if (winner === null)
