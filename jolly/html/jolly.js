@@ -4,34 +4,34 @@
 // array: stack of objects with offset.
 // anything else, also contents of the array: single object.
 
-jolly.viewport = [-5, -5, 7, 5];
+game.viewport = [-5, -5, 7, 5];
 
-jolly.y_ship = 0;
-jolly.chest = [null, null];
-jolly.wild;
+game.y_ship = 0;
+game.chest = [null, null];
+game.wild;
 
-jolly.playercolor = function(n) {
+game.playercolor = function(n) {
 	return ['white', 'black'][n];
 }
 
-jolly.init2d = function() {
-	jolly.wild = 'black';
+game.init2d = function() {
+	game.wild = 'black';
 }
 
-jolly.init3d = function() {
-	jolly.wild = '#444';
-	color_texture(null, 'color-' + jolly.wild, jolly.wild);
+game.init3d = function() {
+	game.wild = '#444';
+	color_texture(null, 'color-' + game.wild, game.wild);
 	for (var i = 0; i < 2; ++i) {
-		var tmp = please.access('owner.jta').instance();
-		color_texture(tmp, 'owner' + i, jolly.playercolor(i));
+		var tmp = please.access('jta-3d/owner.jta').instance();
+		color_texture(tmp, 'owner' + i, game.playercolor(i));
 		tmp.destroy();
 	}
 }
 
-jolly.update_card = function(card, ship) {
+game.update_card = function(card, ship) {
 	var fg, bg;
 	if (ship !== null && card[0] != ship) {
-		bg = jolly.wild;
+		bg = game.wild;
 		fg = 'white';
 	}
 	else {
@@ -47,7 +47,7 @@ jolly.update_card = function(card, ship) {
 	}
 }
 
-jolly.ui = {
+game.ui = {
 	'Private.actions.done': {
 		size: [1.5, .5, 150, 50],
 		location: [-4, 3, .11],
@@ -84,9 +84,9 @@ jolly.ui = {
 			color_texture(this, 'ship' + num, c[num]);
 		},
 		// both
-		location: [-2, jolly.y_ship, 0],
+		location: [-2, game.y_ship, 0],
 		offset: [2, 0, 0],
-		click: jolly.select_ship
+		click: game.select_ship
 	},
 	'ship.*.owner': {
 		size2d: [.5, .5, 50, 50],
@@ -94,17 +94,17 @@ jolly.ui = {
 			return src === null ? null : ('owner' + src + '.svg');
 		},
 		visible: function(src, num) { return src !== null; },
-		location2d: [-1.8, jolly.y_ship, .4],
-		location3d: [-1.6, jolly.y_ship, .13],
+		location2d: [-1.8, game.y_ship, .4],
+		location3d: [-1.6, game.y_ship, .13],
 		offset: [2, 0, 0],
 		class2d: 'owner',
 		//text3d: function(src) { return src === null ? '' : src; },
-		click: jolly.select_ship,
+		click: game.select_ship,
 		model3d: 'owner.jta',
 		init3d: function() { this.rotation_z = 90; },
 		update3d: function(src, ship) {
 			if (src !== null)
-				color_texture(this, 'owner' + src, jolly.playercolor(src));
+				color_texture(this, 'owner' + src, game.playercolor(src));
 		}
 	},
 	'ship.*.crew.*.*': {
@@ -112,20 +112,20 @@ jolly.ui = {
 		class3d: 'value',
 		location: function(src, ship, side, num) {
 			var s = (side == my_num ? -1 : 1);
-			return [-2, jolly.y_ship + s * (1.5 + num * .4), .1 - s * num * .01];
+			return [-2, game.y_ship + s * (1.5 + num * .4), .1 - s * num * .01];
 		},
 		offset: [[2, 0, 0], null, null],
 		size2d: [1, 1, 100, 100],
 		size3d: [1, 1, 50, 50],
 		text: function(src, ship) { return src[0] == ship ? src[1] : 1; },
-		update: function(src, ship) { jolly.update_card.call(this, src, ship); },
-		click: jolly.select_ship,
+		update: function(src, ship) { game.update_card.call(this, src, ship); },
+		click: game.select_ship,
 		tag: function(src, ship) { return src[0] == ship ? 'wild' : 'card-' + src[0] + '-' + src[1]; }
 	},
 	'deck.*': {
 		size: [1, 1, 100, 100],
 		image: 'hidden.svg',
-		location: [-4, jolly.y_ship, 0],
+		location: [-4, game.y_ship, 0],
 		offset2d: [0, .04, .1],
 		offset3d: [0, 0, .02],
 	},
@@ -145,13 +145,13 @@ jolly.ui = {
 			if (Public.state == 'divide') {
 				// Both groups on one side.
 				if (group == 1)
-					result = [5 - 1.5 * num, jolly.y_ship + (my_turn ? -1 : 1) * 4.5, 0];
+					result = [5 - 1.5 * num, game.y_ship + (my_turn ? -1 : 1) * 4.5, 0];
 				else
-					result = [-2 + 1.5 * num, jolly.y_ship + (my_turn ? -1 : 1) * 4.5, 0];
+					result = [-2 + 1.5 * num, game.y_ship + (my_turn ? -1 : 1) * 4.5, 0];
 			}
 			else if (Public.state == 'choose') {
 				// Both groups on one side.
-				var y = jolly.y_ship + (my_turn ? 4.5 : -4.5);
+				var y = game.y_ship + (my_turn ? 4.5 : -4.5);
 				if (group == 1)
 					result = [5 - 1.5 * num, y, 0];
 				else
@@ -161,14 +161,14 @@ jolly.ui = {
 				// Play, group 0 on one side, group 1 on other side.
 				var s0 = ((Public.state == my_num) ? -1 : 1);
 				if (group == 1)
-					result = [1.5 * (Public.cards[1].length / 2 - num), jolly.y_ship - s0 * 4.5, 0];
+					result = [1.5 * (Public.cards[1].length / 2 - num), game.y_ship - s0 * 4.5, 0];
 				else {
 					if (a === undefined || a === '')
-						result = [1.5 * num, jolly.y_ship + s0 * 4.5, 0];
+						result = [1.5 * num, game.y_ship + s0 * 4.5, 0];
 					else if (a === 'cash')
-						result = [6, jolly.y_ship - .5 + .5 * num, .1 - num * .01];
+						result = [6, game.y_ship - .5 + .5 * num, .1 - num * .01];
 					else
-						result = [-2 + a * 2, jolly.y_ship + s0 * (2.5 + .5 * num), .1 - s0 * num * .01];
+						result = [-2 + a * 2, game.y_ship + s0 * (2.5 + .5 * num), .1 - s0 * num * .01];
 				}
 			}
 			return result;
@@ -185,10 +185,10 @@ jolly.ui = {
 		},
 		update3d: function(src, group, num) {
 			var a = (Public.active === undefined || num < 0 || num >= Public.active.length ? undefined : Public.active[num]);
-			jolly.update_card.call(this, src, (group == 0 && a != undefined && typeof a != 'string') ? a : null);
+			game.update_card.call(this, src, (group == 0 && a != undefined && typeof a != 'string') ? a : null);
 		},
 		update2d: function(src, group, num) {
-			jolly.update_card.call(this, src, null);
+			game.update_card.call(this, src, null);
 			var a = (Public.active === undefined || num < 0 || num >= Public.active.length ? undefined : Public.active[num]);
 			if (group == 0 && num == Public.selected) {
 				this.div.AddClass('selected');
@@ -209,30 +209,30 @@ jolly.ui = {
 				else if (a == 'cash')
 					game('cash');
 				else
-					jolly.select_ship(src, a);
+					game.select_ship(src, a);
 			}
 		}
 	},
 	'players.*': {
 		class2d: 'card',
-		location: function(src, player) { return [6, jolly.y_ship + (player == my_num ? -1 : 1) * 4, webgame.use_3d ? 0 : .1]; },
-		style2d: function(src, player) { return {background: 'grey', color: jolly.playercolor(player) }; },
+		location: function(src, player) { return [6, game.y_ship + (player == my_num ? -1 : 1) * 4, webgame.use_3d ? 0 : .1]; },
+		style2d: function(src, player) { return {background: 'grey', color: game.playercolor(player) }; },
 		size2d: [1, 1, 100, 100],
 		size3d: [1, 1, 50, 50],
 		text2d: _('$$'),
 		model3d: 'chest.jta',
 		init3d: function(src, player) {
-			color_texture(this.node_lookup['base'], 'chest' + player, jolly.playercolor(player));
-			color_texture(this.node_lookup['lid'], 'chest' + player, jolly.playercolor(player));
-			jolly.chest[player] = this;
+			color_texture(this.node_lookup['base'], 'chest' + player, game.playercolor(player));
+			color_texture(this.node_lookup['lid'], 'chest' + player, game.playercolor(player));
+			game.chest[player] = this;
 		},
 		click: function() { game('cash'); }
 	},
 	'players.*.pile.*': {
 		size: [1, 1, 100, 100],
 		image: 'hidden.svg',
-		location: function(src, player) { return [6, jolly.y_ship + (player == my_num ? -1 : 1) * 4, .09]; },
-		init3d: function(src, player) { if (jolly.chest[player] !== null) jolly.chest[player].play('open'); }
+		location: function(src, player) { return [6, game.y_ship + (player == my_num ? -1 : 1) * 4, .09]; },
+		init3d: function(src, player) { if (game.chest[player] !== null) game.chest[player].play('open'); }
 	},
 	'cash.*.*': {
 		location: function(src, player) { return [4, 4 * player - 2, 0]; },
@@ -246,11 +246,11 @@ jolly.ui = {
 	}
 };
 
-jolly.select_ship = function(src, ship) {
+game.select_ship = function(src, ship) {
 	game('crew', ship);
 }
 
-jolly.update = function() {
+game.update = function() {
 	if (Private.actions.move)
 		set_state(_('Choose how to divide the cards and click done when ready'));
 	else if (Private.actions.choose)
