@@ -1,3 +1,4 @@
+"use strict";
 // Options for ui objects:
 // boolean: value determines visibility.
 // int: stack of objects with offset.
@@ -8,7 +9,6 @@ game.viewport = [-5, -5, 7, 5];
 
 game.y_ship = 0;
 game.chest = [null, null];
-game.wild;
 
 game.playercolor = function(n) {
 	return ['white', 'black'][n];
@@ -47,6 +47,27 @@ game.update_card = function(card, ship) {
 	}
 }
 
+game.select_ship = function(src, ship) {
+	server('crew', ship);
+}
+
+game.update = function() {
+	if (Private.actions.move)
+		set_state(_('Choose how to divide the cards and click done when ready'));
+	else if (Private.actions.choose)
+		set_state(_('Select your cards'))
+	else if (Private.actions.cash) {
+		if (Private.actions.done)
+			set_state(_('Play your cards and click done to finish'));
+		else
+			set_state(_('Play your cards'));
+	}
+	else if (my_num !== null)
+		set_state(_('Wait for your turn'));
+	else
+		set_state(_('You are watching the game'));
+}
+
 game.ui = {
 	'Private.actions.done': {
 		size: [1.5, .5, 150, 50],
@@ -55,7 +76,7 @@ game.ui = {
 		'class3d': 'value',
 		text: _('Done'),
 		init3d: function() { color_texture(this, 'button', 'grey'); },
-		click: function() { game('done'); },
+		click: function() { server('done'); },
 		visible: function(src) { return src !== undefined; }
 	},
 	'Private.actions.reset': {
@@ -65,17 +86,17 @@ game.ui = {
 		'class3d': 'value',
 		text: _('Reset'),
 		init3d: function() { color_texture(this, 'button', 'grey'); },
-		click: function() { game('reset'); },
+		click: function() { server('reset'); },
 		visible: function(src) { return src !== undefined; }
 	},
 	'ship.*': {
 		// 2d
 		size2d: [1, 1, 512, 512],
-		image2d: function(src, num) { return 'ship' + num + '.svg'; },
+		image2d: function(src, num) { return game.image['ship' + num](); },
 		class2d: 'ship',
 		init2d: function(src, num) { this.div.AddText(String(src.value)); },
 		// 3d
-		model3d: function(src, num) { return 'ship' + '.jta'; },
+		model3d: game.jta.ship,
 		overlay3d: [-.22, 0, .4],
 		text3d: function(src, num) { return src.value; },
 		class3d: 'value',
@@ -91,7 +112,8 @@ game.ui = {
 	'ship.*.owner': {
 		size2d: [.5, .5, 50, 50],
 		image2d: function(src, num) {
-			return src === null ? null : ('owner' + src + '.svg');
+			console.info(src, num);
+			return src === null ? null : game.image['owner' + src]();
 		},
 		visible: function(src, num) { return src !== null; },
 		location2d: [-1.8, game.y_ship, .4],
@@ -100,7 +122,7 @@ game.ui = {
 		class2d: 'owner',
 		//text3d: function(src) { return src === null ? '' : src; },
 		click: game.select_ship,
-		model3d: 'owner.jta',
+		model3d: game.jta.owner,
 		init3d: function() { this.rotation_z = 90; },
 		update3d: function(src, ship) {
 			if (src !== null)
@@ -124,7 +146,7 @@ game.ui = {
 	},
 	'deck.*': {
 		size: [1, 1, 100, 100],
-		image: 'hidden.svg',
+		image: game.image.hidden,
 		location: [-4, game.y_ship, 0],
 		offset2d: [0, .04, .1],
 		offset3d: [0, 0, .02],
@@ -199,15 +221,15 @@ game.ui = {
 		},
 		click: function(src, group, num) {
 			if (Private.actions.move)
-				game('move', group, num);
+				server('move', group, num);
 			else if (Private.actions.choose)
-				game('choose', group);
+				server('choose', group);
 			else if (group == 0) {
 				var a = (Public.active === undefined || num < 0 || num >= Public.active.length ? undefined : Public.active[num]);
 				if (a === undefined || a == '')
-					game('select', num);
+					server('select', num);
 				else if (a == 'cash')
-					game('cash');
+					server('cash');
 				else
 					game.select_ship(src, a);
 			}
@@ -220,17 +242,17 @@ game.ui = {
 		size2d: [1, 1, 100, 100],
 		size3d: [1, 1, 50, 50],
 		text2d: _('$$'),
-		model3d: 'chest.jta',
+		model3d: game.jta.chest,
 		init3d: function(src, player) {
 			color_texture(this.node_lookup['base'], 'chest' + player, game.playercolor(player));
 			color_texture(this.node_lookup['lid'], 'chest' + player, game.playercolor(player));
 			game.chest[player] = this;
 		},
-		click: function() { game('cash'); }
+		click: function() { server('cash'); }
 	},
 	'players.*.pile.*': {
 		size: [1, 1, 100, 100],
-		image: 'hidden.svg',
+		image: game.image.hidden,
 		location: function(src, player) { return [6, game.y_ship + (player == my_num ? -1 : 1) * 4, .09]; },
 		init3d: function(src, player) { if (game.chest[player] !== null) game.chest[player].play('open'); }
 	},
@@ -245,24 +267,3 @@ game.ui = {
 		init3d: function() { color_texture(this, 'bg', '#ff8'); }
 	}
 };
-
-game.select_ship = function(src, ship) {
-	game('crew', ship);
-}
-
-game.update = function() {
-	if (Private.actions.move)
-		set_state(_('Choose how to divide the cards and click done when ready'));
-	else if (Private.actions.choose)
-		set_state(_('Select your cards'))
-	else if (Private.actions.cash) {
-		if (Private.actions.done)
-			set_state(_('Play your cards and click done to finish'));
-		else
-			set_state(_('Play your cards'));
-	}
-	else if (my_num !== null)
-		set_state(_('Wait for your turn'));
-	else
-		set_state(_('You are watching the game'));
-}

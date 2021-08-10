@@ -1,8 +1,6 @@
 # Jolly and Roger
 # vim: set filetype=python fileencoding=utf-8 :
 
-name = 'Jolly en Roger'
-
 # Public:
 # round: which round is this
 # turn: which player divides the cards this turn
@@ -14,8 +12,6 @@ name = 'Jolly en Roger'
 # crew cards are [color:int, value:int, wildcard:bool]
 
 import random
-
-num_players = 2
 
 all_cards = [
 	[0, 4, 3, 2, 2, 2], # Green (13)

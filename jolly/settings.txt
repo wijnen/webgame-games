@@ -1,0 +1,4 @@
+# Jolly and Roger
+
+name: Jolly and Roger
+players: 2

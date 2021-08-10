@@ -1,8 +1,5 @@
 # Tic tac toe: an example game using the webgame system.
 
-name = 'Tic Tac Toe'
-num_players = 2
-
 class Game:
 	def run(self):
 		self.Public.board = [[None, None, None], [None, None, None], [None, None, None]]
