@@ -1,0 +1,8 @@
+name: Nuclear Security
+players: 1-10
+interface: 2D
+
+setting: startroom
+name: Starting Room
+description: If you have played the game before and want to skip the first part, you can do so by setting this number to the first room you want to play. If you haven't played the game before, you should leave it at 0.
+type: number

@@ -1,0 +1,33 @@
+.popup_base {
+	display: none;
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	background: black;
+	opacity: 80%;
+	z-index: 10000;
+}
+
+.popup_content {
+	position: absolute;
+	background: white;
+	opacity: 100%;
+	left: 15%;
+	right: 15%;
+	top: 15%;
+	bottom: 15%;
+	overflow: auto;
+	border-radius: 1ex;
+	padding: 2em;
+}
+
+.output {
+	box-sizing: border-box;
+	width: 5em;
+}
+
+.you {
+	color: blue;
+}
