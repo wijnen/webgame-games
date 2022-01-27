@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
-"Report-Msgid-Bugs-To: wijnen@debian.org\n"
-"POT-Creation-Date: 2020-04-20 10:30+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-02 23:50+0100\n"
 "PO-Revision-Date: 2020-04-09 13:55+0200\n"
 "Last-Translator: Bas Wijnen <wijnen@debian.org>\n"
 "Language-Team: Dutch <NL@li.org>\n"
@@ -16,228 +16,249 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#. The language name of the translation, for the dropdown selection
-#: standaardinvoer:2
-msgid "Zoo"
-msgstr "Dierentuin"
+#. Setting: name
+#: settings.txt:2
+msgid "Frank's Zoo"
+msgstr ""
 
-#: standaardinvoer:2
-msgid "Language Name"
-msgstr "Nederlands"
-
-#: html/zoo.js:98
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:124
 msgid "Can only trade two cards"
 msgstr "Je moet precies twee kaarten ruilen"
 
 #. Not allowed.
-#: html/zoo.js:133
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:159
 msgid "You cannot play this card"
 msgstr "Deze kaart kan je niet spelen"
 
-#: html/zoo.js:208
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:234
 msgid "You cannot play cards on the table at the moment"
 msgstr "Je bent niet aan de beurt om kaarten op tafel te leggen"
 
-#: html/zoo.js:212
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:238
 msgid "Trade needs exactly two cards"
 msgstr "Je moet precies twee kaarten ruilen"
 
-#: html/zoo.js:232
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:258
 msgid "trade needs exactly two cards"
 msgstr "Je moet precies twee kaarten ruilen"
 
-#: html/zoo.js:378
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:427
 msgid "The game has ended"
 msgstr "Het spel is afgelopen"
 
-#: html/zoo.js:385
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:434
 msgid "Please give two cards to $1"
 msgstr "Geef twee kaarten aan $1"
 
-#: html/zoo.js:387
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:436
 msgid "Please play two cards into your score pile"
 msgstr "Speel twee kaarten in je eigen aflegstapel"
 
-#: html/zoo.js:391
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:440
 msgid "$1 asks if you can complete their cards"
 msgstr "$1 vraagt of je kaarten wilt bijleggen"
 
-#: html/zoo.js:395
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:444
 msgid "It is your turn to play (you may ask $1 for help)"
 msgstr "Je bent aan de beurt (je mag $1 om hulp vragen)"
 
-#: html/zoo.js:399
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:448
 msgid "It is your turn to play"
 msgstr "Je bent aan de beurt"
 
-#: html/zoo.js:415
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:464
 msgid "Waiting for trade or discard from: $1"
 msgstr "Wachten op ruilen of afleggen: $1"
 
-#: html/zoo.js:417
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:466
 msgid "Waiting for trade from: $1"
 msgstr "Wachten op ruilen: $1"
 
-#: html/zoo.js:423
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:472
 msgid "Waiting for player to connect"
 msgstr "Wachten op verbinding"
 
-#: html/zoo.js:425
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:474
 msgid "It's $1's turn"
 msgstr "$1 is aan de beurt"
 
-#: html/zoo.js:432
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:481
 msgid "(Waiting for this player to connect)"
 msgstr "(Wachten op verbinding)"
 
-#: html/zoo.js:433
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:482
 msgid " (my partner) "
 msgstr " (mijn partner) "
 
-#: html/zoo.js:433
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:482
 msgid " (partner of $1) "
 msgstr " (partner van $1) "
 
 #. }}}
 #. {{{
-#: html/zoo.js:617
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:669
 msgid "Game ended:\n"
 msgstr "Het spel is afgelopen:\n"
 
 #. }}}
 #. {{{
-#: html/zoo.js:626
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:678
 msgid "This round's scores:"
 msgstr "Scores van deze ronde:"
 
-#: html/zoo.js:629
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:681
 msgid ", partner: $1"
 msgstr ", partner: $1"
 
-#: html/zoo.js:630
+#: /home/shevek/src/python-webgame/games/zoo/html/zoo.js:682
 msgid " (self: $1$2, lions: $3, hedgehog: $4)"
 msgstr " (zelf: $1$2, leeuwen: $3, egel: $4)"
 
-#: zoo.gpy:111
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:82
 msgid "invalid argument(s): $1"
 msgstr "ongeldig(e) argument(en): $1"
 
-#: zoo.gpy:119
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:88
 msgid "invalid cards"
 msgstr "ongeldige kaarten"
 
-#: zoo.gpy:124
-msgid "no mosquito"
-msgstr "geen mug"
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:92
+#, fuzzy
+msgid "You can only play a mosquito if you have one"
+msgstr "Je kan alleen om hulp vragen als je kaarten nodig hebt"
 
-#: zoo.gpy:127
-msgid "no joker"
-msgstr "geen joker"
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:96
+#, fuzzy
+msgid "You can only play a joker if you have one"
+msgstr "Je kan alleen om hulp vragen als je kaarten nodig hebt"
 
-#: zoo.gpy:130
-msgid "not enough cards"
-msgstr "niet genoeg kaarten"
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:100
+#, fuzzy
+msgid "You cannot play a negative number of cards"
+msgstr "onjuist aantal gelijke kaarten"
 
-#: zoo.gpy:143
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:104
+#, fuzzy
+msgid "You cannot play more cards than you have"
+msgstr "Deze kaarten kan je niet spelen"
+
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:120
+#, fuzzy
+msgid "You can only add a mosquito to elephants"
+msgstr "Je kan alleen om hulp vragen als je kaarten nodig hebt"
+
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:125
+msgid "This card cannot be played on the current cards on the table"
+msgstr ""
+
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:181
 msgid "You cannot request help on the first turn"
 msgstr "Ja kan niet in de eerste ronde om hulp vragen"
 
-#: zoo.gpy:146
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:184
 msgid "You cannot request help without offering a card"
 msgstr "Ja kan niet om hulp vragen zonder iets aan te bieden"
 
-#: zoo.gpy:157 zoo.gpy:161
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:189
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:193
 msgid "You can only ask help if you need cards"
 msgstr "Je kan alleen om hulp vragen als je kaarten nodig hebt"
 
-#: zoo.gpy:164
-msgid "You cannot play these cards"
-msgstr "Deze kaarten kan je niet spelen"
-
-#: zoo.gpy:175
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:204
 msgid "must play a (non-joker) card"
 msgstr "er moet een kaart worden gespeeld (anders dan joker)"
 
-#: zoo.gpy:180
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:209
 msgid "cannot play lone joker"
 msgstr "joker kan niet alleen gespeeld worden"
 
-#: zoo.gpy:189
-msgid "incorrect number of same cards"
-msgstr "onjuist aantal gelijke kaarten"
-
-#: zoo.gpy:194
-msgid "invalid card"
-msgstr "foute kaart"
-
-#: zoo.gpy:197
-msgid "incorrect number of other cards"
-msgstr "onjuist aantal andere kaarten"
-
-#: zoo.gpy:352
-msgid "invalid help response"
-msgstr "ongeldig hulp-antwoord"
-
-#: zoo.gpy:369
-msgid "invalid new card"
-msgstr "ongeldige nieuwe kaart"
-
-#: zoo.gpy:376
-msgid "you need to play at least one elephant"
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:218
+msgid "You must play one more card of the same type than are on the table"
 msgstr ""
 
-#: zoo.gpy:379
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:223
+msgid "You must play the same number of cards as are on the table"
+msgstr ""
+
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:389
+msgid "You need to play at least one card that is not a joker"
+msgstr ""
+
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:392
 #, fuzzy
-msgid "you can only play the same card type"
+msgid "You can only play the same card type as what was requested"
 msgstr "Deze kaarten kan je niet spelen"
 
-#: zoo.gpy:382
-msgid "mosquito is only allowed with elephants"
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:395
+msgid "A mosquito is only allowed with elephants"
 msgstr ""
 
-#: zoo.gpy:385
-msgid "only one extra mosquito allowed"
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:398
+msgid "Only one extra mosquito is allowed"
 msgstr ""
 
-#: zoo.gpy:388
-#, fuzzy
-msgid "trying to play negative number of cards"
-msgstr "onjuist aantal gelijke kaarten"
-
-#: zoo.gpy:391
-#, fuzzy
-msgid "you don't have a mosquito"
-msgstr "geen nieuwe mug"
-
-#: zoo.gpy:394
-msgid "you don't have a joker"
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:402
+msgid ""
+"Together you must play one more card of the same type than are on the table"
 msgstr ""
 
-#: zoo.gpy:397
-msgid "trying to play more cards than you have"
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:406
+msgid "Together you must play the same number of cards as are on the table"
 msgstr ""
 
-#: zoo.gpy:403
-#, fuzzy
-msgid "Wrong card type"
-msgstr "fout kaarttype"
-
-#: zoo.gpy:408
-#, fuzzy
-msgid "Wrong number of cards"
-msgstr "onjuist aantal gelijke kaarten"
-
-#: zoo.gpy:441
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:442
 msgid "invalid call to trade"
 msgstr "ongeldig ruilcommando"
 
-#: zoo.gpy:444
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:445
 msgid "invalid cards in trade"
 msgstr "ongeldige ruilkaarten"
 
-#: zoo.gpy:447
+#: /home/shevek/src/python-webgame/games/zoo/zoo.py:448
 msgid "Player does not have cards"
 msgstr "Speler heeft geen kaarten"
+
+#~ msgid "Zoo"
+#~ msgstr "Dierentuin"
+
+#~ msgid "Language Name"
+#~ msgstr "Nederlands"
+
+#~ msgid "no mosquito"
+#~ msgstr "geen mug"
+
+#~ msgid "no joker"
+#~ msgstr "geen joker"
+
+#~ msgid "not enough cards"
+#~ msgstr "niet genoeg kaarten"
+
+#~ msgid "incorrect number of same cards"
+#~ msgstr "onjuist aantal gelijke kaarten"
+
+#~ msgid "invalid card"
+#~ msgstr "foute kaart"
+
+#~ msgid "incorrect number of other cards"
+#~ msgstr "onjuist aantal andere kaarten"
+
+#~ msgid "invalid help response"
+#~ msgstr "ongeldig hulp-antwoord"
+
+#~ msgid "invalid new card"
+#~ msgstr "ongeldige nieuwe kaart"
+
+#, fuzzy
+#~ msgid "you don't have a mosquito"
+#~ msgstr "geen nieuwe mug"
+
+#, fuzzy
+#~ msgid "Wrong card type"
+#~ msgstr "fout kaarttype"
+
+#, fuzzy
+#~ msgid "Wrong number of cards"
+#~ msgstr "onjuist aantal gelijke kaarten"
 
 #~ msgid "Round ended"
 #~ msgstr "De ronde is afgelopen"

@@ -49,8 +49,8 @@ class Game: # {{{
 		# self.Public.help = undefined.
 		self.Public.remove = True	# Remove cards when they disappear. This is a flag for making animated cards possible.
 		for p, player in enumerate(self.players):
-			player.Private.hand = [0] * len(cardnames)
-			player.Private.pile = [0] * len(cardnames)
+			self.Private[p].hand = [0] * len(cardnames)
+			self.Private[p].pile = [0] * len(cardnames)
 			self.Public.players[p].score = 0
 			self.Public.players[p].score_cards = 0
 			self.Public.players[p].partner = (None, None)
@@ -73,7 +73,7 @@ class Game: # {{{
 		return '\n'.join('%s: %d' % (player.name, player.score) for player in self.Public.players)
 	# }}}
 
-	def check_valid(self, args, player): # {{{
+	def check_valid(self, args, p, player): # {{{
 		'''Check if arguments are a valid play.
 		Only basic validity is checked, not if it is valid for the current game state.
 		returns card, num, mosquito, joker, extra, public_extra or None, None, None, None, None, None.'''
@@ -88,11 +88,11 @@ class Game: # {{{
 			self.reply(_('invalid cards'))
 			return err
 
-		if mosquito and player.Private.hand[MOSQUITO] < 1:
+		if mosquito and self.Private[p].hand[MOSQUITO] < 1:
 			self.reply(_('You can only play a mosquito if you have one'))
 			return err
 
-		if joker and player.Private.hand[JOKER] < 1:
+		if joker and self.Private[p].hand[JOKER] < 1:
 			self.reply(_('You can only play a joker if you have one'))
 			return err
 
@@ -100,7 +100,7 @@ class Game: # {{{
 			self.reply(_('You cannot play a negative number of cards'))
 			return err
 
-		if player.Private.hand[card] < num:
+		if self.Private[p].hand[card] < num:
 			self.reply(_('You cannot play more cards than you have'))
 			return err
 
@@ -143,14 +143,14 @@ class Game: # {{{
 			self.Public.players[p].done = None
 			self.Public.players[p].cards = 0
 			for c, card in enumerate(cardnames):
-				player.Private.hand[c] = 0
-				player.Private.pile[c] = 0
+				self.Private[p].hand[c] = 0
+				self.Private[p].pile[c] = 0
 			self.Public.players[p].blocked = False
 			self.Public.players[p].score_cards = 0
 		p = 0
 		while len(deck) > 0:
 			card = deck.pop()
-			self.players[p].Private.hand[card] += 1
+			self.Private[p].hand[card] += 1
 			self.Public.players[p].cards += 1
 			p = (p + 1) % len(self.players)
 		# }}}
@@ -172,7 +172,7 @@ class Game: # {{{
 			if partner[1] is False and self.Public.current[1] > 0 and self.Public.players[partner[0]].cards > 0:
 				options['ask'] = p
 			cmd = (yield options)
-			card, num, mosquito, joker, extra, public_extra = self.check_valid(cmd['args'], player)
+			card, num, mosquito, joker, extra, public_extra = self.check_valid(cmd['args'], p, player)
 			if card is None:
 				continue
 			# Check that this is a valid play.
@@ -229,22 +229,22 @@ class Game: # {{{
 
 			# Remove cards from players hand.
 			if mosquito:
-				player.Private.hand[MOSQUITO] -= 1
+				self.Private[p].hand[MOSQUITO] -= 1
 				self.Public.players[p].cards -= 1
 				self.Public.pile[MOSQUITO] += 1
 				self.Public.current_cards += 1
 			if joker:
-				player.Private.hand[JOKER] -= 1
+				self.Private[p].hand[JOKER] -= 1
 				self.Public.players[p].cards -= 1
 				self.Public.pile[JOKER] += 1
 				self.Public.current_cards += 1
-			player.Private.hand[card] -= num
+			self.Private[p].hand[card] -= num
 			self.Public.pile[card] += num
 			self.Public.players[p].cards -= num
 			self.Public.current_cards += num
 
 			# Set player to inactive if hand is empty.
-			if all(player.Private.hand[c] == 0 for c, card in enumerate(cardnames)):
+			if all(self.Private[p].hand[c] == 0 for c, card in enumerate(cardnames)):
 				self.Public.players[p].done = len(self.players) - active
 				active -= 1
 
@@ -278,13 +278,13 @@ class Game: # {{{
 					self.Public.players[p].score += 4
 			if self.Public.round > 0 or len(self.players) == 3:
 				# Handle bonus scores.
-				if player.Private.pile[LION] > 1:
-					delta[p][2] += player.Private.pile[LION]
-					self.Public.players[p].score += player.Private.pile[LION]
-				if player.Private.hand[LION] > 0:
-					delta[p][2] -= player.Private.hand[LION]
-					self.Public.players[p].score -= player.Private.hand[LION]
-				if player.Private.pile[HEDGEHOG] < 1:
+				if self.Private[p].pile[LION] > 1:
+					delta[p][2] += self.Private[p].pile[LION]
+					self.Public.players[p].score += self.Private[p].pile[LION]
+				if self.Private[p].hand[LION] > 0:
+					delta[p][2] -= self.Private[p].hand[LION]
+					self.Public.players[p].score -= self.Private[p].hand[LION]
+				if self.Private[p].pile[HEDGEHOG] < 1:
 					delta[p][3] -= 1
 					self.Public.players[p].score -= 1
 		for p, player in enumerate(self.players):
@@ -322,14 +322,14 @@ class Game: # {{{
 				for c, card in enumerate(cardnames):
 					num = self.Public.pile[c]
 					self.Public.pile[c] = 0
-					self.players[t].Private.pile[c] += num
+					self.Private[t].pile[c] += num
 				num_cards = self.Public.current_cards
 				self.Public.current_cards = 0
 				self.Public.players[t].score_cards += num_cards
 				self.Public.remove = True
 			if self.Public.players[t].done is not None:
 				continue
-			if self.Public.current[1] == 0 and self.Public.players[t].cards == 1 and self.players[t].Private.hand[JOKER] > 0:
+			if self.Public.current[1] == 0 and self.Public.players[t].cards == 1 and self.Private[t].hand[JOKER] > 0:
 				self.Public.players[t].blocked = True
 			elif not self.Public.players[t].blocked:
 				break
@@ -357,11 +357,11 @@ class Game: # {{{
 		target = self.Public.players[player_num].partner[0]
 		while True:
 			self.Public.remove = False
-			player.Private.hand[card] -= num
+			self.Private[p].hand[card] -= num
 			if joker:
-				player.Private.hand[JOKER] -= 1
+				self.Private[p].hand[JOKER] -= 1
 			if mosquito:
-				player.Private.hand[MOSQUITO] -= 1
+				self.Private[p].hand[MOSQUITO] -= 1
 			self.Public.players[player_num].cards -= num + extra
 			self.Public.help = [card, num, mosquito, joker, target]
 			self.Public.remove = True
@@ -370,12 +370,12 @@ class Game: # {{{
 			del self.Public.help
 			self.Public.players[player_num].cards += num + extra
 			if mosquito:
-				player.Private.hand[MOSQUITO] += 1
+				self.Private[p].hand[MOSQUITO] += 1
 			if joker:
-				player.Private.hand[JOKER] += 1
-			player.Private.hand[card] += num
+				self.Private[p].hand[JOKER] += 1
+			self.Private[p].hand[card] += num
 			self.Public.remove = True
-			new_card, new_num, new_mosquito, new_joker, new_extra, public_extra = self.check_valid(args, self.players[target])
+			new_card, new_num, new_mosquito, new_joker, new_extra, public_extra = self.check_valid(args, target, self.players[target])
 			if new_card is None:
 				continue
 			if new_num == 0 and not new_mosquito and not new_joker:
@@ -410,15 +410,15 @@ class Game: # {{{
 		# Give cards to partner.
 		self.Public.remove = False
 		if new_mosquito:
-			self.players[target].Private.hand[MOSQUITO] -= 1
-			self.players[player_num].Private.hand[MOSQUITO] += 1
+			self.Private[target].hand[MOSQUITO] -= 1
+			self.Private[player_num].hand[MOSQUITO] += 1
 		if new_joker:
-			self.players[target].Private.hand[JOKER] -= 1
-			self.players[player_num].Private.hand[JOKER] += 1
+			self.Private[target].hand[JOKER] -= 1
+			self.Private[player_num].hand[JOKER] += 1
 		count = new_num + (1 if new_mosquito else 0) + (1 if new_joker else 0)
-		self.players[target].Private.hand[new_card] -= new_num
+		self.Private[target].hand[new_card] -= new_num
 		self.Public.players[target].cards -= count
-		self.players[player_num].Private.hand[new_card] += new_num
+		self.Private[player_num].hand[new_card] += new_num
 		self.Public.players[player_num].cards += count
 		self.Public.remove = True
 		return new_card, num + new_num, mosquito or new_mosquito, joker or new_joker
@@ -444,22 +444,22 @@ class Game: # {{{
 			if not 0 <= args[0] < len(cardnames) or not 0 <= args[1] < len(cardnames):
 				self.reply(_('invalid cards in trade'))
 				continue
-			if (args[0] == args[1] and player.Private.hand[args[0]] < 2) or player.Private.hand[args[0]] < 1 or player.Private.hand[args[1]] < 1:
+			if (args[0] == args[1] and self.Private[p].hand[args[0]] < 2) or self.Private[p].hand[args[0]] < 1 or self.Private[p].hand[args[1]] < 1:
 				self.reply(_('Player does not have cards'))
 				continue
 			self.Public.remove = False
-			player.Private.hand[args[0]] -= 1
-			player.Private.hand[args[1]] -= 1
+			self.Private[p].hand[args[0]] -= 1
+			self.Private[p].hand[args[1]] -= 1
 			self.Public.players[p].cards -= 2
 			who.remove(p)
 			if self.Public.players[p].partner[0] is None:
-				player.Private.pile[args[0]] += 1
-				player.Private.pile[args[1]] += 1
+				self.Private[p].pile[args[0]] += 1
+				self.Private[p].pile[args[1]] += 1
 				self.Public.players[p].score_cards += 2
 			else:
 				partner = self.Public.players[p].partner
-				self.players[partner[0]].Private.hand[args[0]] += 1
-				self.players[partner[0]].Private.hand[args[1]] += 1
+				self.Private[partner[0]].hand[args[0]] += 1
+				self.Private[partner[0]].hand[args[1]] += 1
 				self.Public.players[partner[0]].cards += 2
 				self.players[partner[0]].send('received', args[0], args[1])
 			if self.Public.players[p].partner[1] is False:
@@ -487,10 +487,10 @@ class Game: # {{{
 	def demo(self):
 		self.init()
 		for c, card in enumerate(cards):
-			self.players[0].Private.hand[c] = card['number']
+			self.Private[0].hand[c] = card['number']
 		yield 'There are 60 cards in the game. 5 of each animal, except 4 mosquitos and 1 parrot. Every card except the parrot has a collection of other animals above it. Those are the animals that it fears.'
 		num_cards = 60 / len(self.players)
-		self.players[0].Private.hand = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 4, 1]
+		self.Private[0].hand = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 4, 1]
 		for p in range(len(self.players)):
 			self.Public.players[p].cards = 60 / len(self.players)
 
