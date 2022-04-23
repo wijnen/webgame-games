@@ -43,14 +43,14 @@ class Game: # {{{
 		# Initialize shared data.
 		self.Public.cards = cards
 		self.Public.cardnames = cardnames
-		self.Public.pile = {}
+		self.Public.pile = []
 		self.Public.current_cards = 0
-		self.Public.current = [None, 0, False, False, None]
+		self.Public.current = {'card': None, 'num': 0, 'mosquito': False, 'joker': False, 'player': None}
 		# self.Public.help = undefined.
 		self.Public.remove = True	# Remove cards when they disappear. This is a flag for making animated cards possible.
 		for p, player in enumerate(self.players):
 			self.Private[p].hand = [0] * len(cardnames)
-			self.Private[p].pile = [0] * len(cardnames)
+			self.Private[p].pile = []
 			self.Public.players[p].score = 0
 			self.Public.players[p].score_cards = 0
 			self.Public.players[p].partner = (None, None)
@@ -111,7 +111,7 @@ class Game: # {{{
 			mosquito = False
 
 		# Turn lone mosquito back into extra if elephants are needed.
-		if num == 1 and card == MOSQUITO and self.Public.current[1] > 0 and self.Public.current[0] != MOSQUITO and MOSQUITO not in cards[self.Public.current[0]]['under']:
+		if num == 1 and card == MOSQUITO and self.Public.current.num > 0 and self.Public.current.card != MOSQUITO and MOSQUITO not in cards[self.Public.current.card]['under']:
 			card = ELEPHANT
 			num = 0
 			mosquito = True
@@ -121,15 +121,18 @@ class Game: # {{{
 			return err
 
 		# Refuse cards that cannot be useful.
-		if (num > 0 or mosquito) and self.Public.current[1] > 0 and card != self.Public.current[0] and card not in cards[self.Public.current[0]]['under']:
+		if (num > 0 or mosquito) and self.Public.current.num > 0 and card != self.Public.current.card and card not in cards[self.Public.current.card]['under']:
 			self.reply(_('This card cannot be played on the current cards on the table'))
 			return err
 
 		# Everything is fine.
 		extra = (1 if mosquito else 0) + (1 if joker else 0)
-		public_extra = (1 if self.Public.current[2] else 0) + (1 if self.Public.current[3] else 0)
+		public_extra = (1 if self.Public.current.mosquito else 0) + (1 if self.Public.current.joker else 0)
 		return card, num, mosquito, joker, extra, public_extra
 	# }}}
+
+	def mkpilepos(self):
+		return [(random.random() - .5) * 2 for _ in range(2)]
 
 	def round(self): # {{{
 		'''Run one round of the game.'''
@@ -137,14 +140,14 @@ class Game: # {{{
 		deck = []
 		for c, card in enumerate(cardnames):
 			deck.extend([c] * cards[c]['number'])
-			self.Public.pile[c] = 0
+		self.Public.pile = []
 		random.shuffle(deck)
 		for p, player in enumerate(self.players):
 			self.Public.players[p].done = None
 			self.Public.players[p].cards = 0
 			for c, card in enumerate(cardnames):
 				self.Private[p].hand[c] = 0
-				self.Private[p].pile[c] = 0
+			self.Private[p].pile = []
 			self.Public.players[p].blocked = False
 			self.Public.players[p].score_cards = 0
 		p = 0
@@ -156,7 +159,7 @@ class Game: # {{{
 		# }}}
 
 		# Set up game settings.
-		self.Public.current = [None, 0, False, False, None]
+		self.Public.current = {'card': None, 'num': 0, 'mosquito': False, 'joker': False, 'player': None}
 		self.Public.current_cards = 0
 		active = len(self.players)
 
@@ -169,7 +172,7 @@ class Game: # {{{
 			player = self.players[p]
 			options = {'play': p}
 			partner = self.Public.players[p].partner
-			if partner[1] is False and self.Public.current[1] > 0 and self.Public.players[partner[0]].cards > 0:
+			if partner[1] is False and self.Public.current.num > 0 and self.Public.players[partner[0]].cards > 0:
 				options['ask'] = p
 			cmd = (yield options)
 			card, num, mosquito, joker, extra, public_extra = self.check_valid(cmd['args'], p, player)
@@ -177,19 +180,19 @@ class Game: # {{{
 				continue
 			# Check that this is a valid play.
 			if cmd['command'] == 'ask':
-				if self.Public.current[1] == 0:
+				if self.Public.current.num == 0:
 					self.reply(_('You cannot request help on the first turn'))
 					continue
 				if num + extra == 0:
 					self.reply(_('You cannot request help without offering a card'))
 					continue
 				if num > 0 or mosquito:
-					if card == self.Public.current[0]:
-						if num + extra >= self.Public.current[1] + public_extra + 1:
+					if card == self.Public.current.card:
+						if num + extra >= self.Public.current.num + public_extra + 1:
 							self.reply(_('You can only ask help if you need cards'))
 							continue
 					else:
-						if num + extra >= self.Public.current[1] + public_extra:
+						if num + extra >= self.Public.current.num + public_extra:
 							self.reply(_('You can only ask help if you need cards'))
 							continue
 				new_cards = (yield from self.get_help(p, card, num, mosquito, joker))
@@ -199,7 +202,7 @@ class Game: # {{{
 				card, num, mosquito, joker = new_cards
 				extra = (1 if mosquito else 0) + (1 if joker else 0)
 				# Fall through.
-			if self.Public.current[1] == 0:
+			if self.Public.current.num == 0:
 				if num == 0 and not mosquito:
 					self.reply(_('must play a (non-joker) card'))
 					continue
@@ -212,34 +215,35 @@ class Game: # {{{
 					self.next_turn()
 					continue
 
-				if card == self.Public.current[0]:
+				if card == self.Public.current.card:
 					# Same card as current.
-					if num + extra != self.Public.current[1] + public_extra + 1:
+					if num + extra != self.Public.current.num + public_extra + 1:
 						self.reply(_('You must play one more card of the same type than are on the table'))
 						continue
 				else:
 					# Other card.
-					if num + extra != self.Public.current[1] + public_extra:
+					if num + extra != self.Public.current.num + public_extra:
 						self.reply(_('You must play the same number of cards as are on the table'))
 						continue
 
 			self.Public.remove = False
 			# Empty the current pile first, so that can be animated.
-			self.Public.current = [card, 0, False, False, p]
+			self.Public.current = {'card': card, 'num': 0, 'mosquito': False, 'joker': False, 'player': p}
 
 			# Remove cards from players hand.
 			if mosquito:
 				self.Private[p].hand[MOSQUITO] -= 1
 				self.Public.players[p].cards -= 1
-				self.Public.pile[MOSQUITO] += 1
+				self.Public.pile.append([MOSQUITO, self.mkpilepos()])
 				self.Public.current_cards += 1
 			if joker:
 				self.Private[p].hand[JOKER] -= 1
 				self.Public.players[p].cards -= 1
-				self.Public.pile[JOKER] += 1
+				self.Public.pile.append([JOKER, self.mkpilepos()])
 				self.Public.current_cards += 1
 			self.Private[p].hand[card] -= num
-			self.Public.pile[card] += num
+			for n in range(num):
+				self.Public.pile.append([card, self.mkpilepos()])
 			self.Public.players[p].cards -= num
 			self.Public.current_cards += num
 
@@ -249,7 +253,7 @@ class Game: # {{{
 				active -= 1
 
 			# Update current state.
-			self.Public.current = [card, num, mosquito, joker, p]
+			self.Public.current = {'card': card, 'num': num, 'mosquito': mosquito, 'joker': joker, 'player': p}
 			self.Public.remove = True
 
 			# End round if 1 active player left.
@@ -278,13 +282,14 @@ class Game: # {{{
 					self.Public.players[p].score += 4
 			if self.Public.round > 0 or len(self.players) == 3:
 				# Handle bonus scores.
-				if self.Private[p].pile[LION] > 1:
-					delta[p][2] += self.Private[p].pile[LION]
-					self.Public.players[p].score += self.Private[p].pile[LION]
+				lions = sum(x == LION for x in self.Private[p].pile)
+				if lions > 1:
+					delta[p][2] += lions
+					self.Public.players[p].score += lions
 				if self.Private[p].hand[LION] > 0:
 					delta[p][2] -= self.Private[p].hand[LION]
 					self.Public.players[p].score -= self.Private[p].hand[LION]
-				if self.Private[p].pile[HEDGEHOG] < 1:
+				if HEDGEHOG not in self.Private[p].pile:
 					delta[p][3] -= 1
 					self.Public.players[p].score -= 1
 		for p, player in enumerate(self.players):
@@ -315,21 +320,19 @@ class Game: # {{{
 		t = self.Public.turn
 		while True:
 			t = (t + 1) % len(self.players)
-			if t == self.Public.current[4]:
+			if t == self.Public.current.player:
 				# Score these cards for this player.
 				self.Public.remove = False
-				self.Public.current = [None, 0, False, False, None]
-				for c, card in enumerate(cardnames):
-					num = self.Public.pile[c]
-					self.Public.pile[c] = 0
-					self.Private[t].pile[c] += num
+				self.Public.current = {'card': None, 'num': 0, 'mosquito': False, 'joker': False, 'player': None}
+				self.Private[t].pile += self.Public.pile
+				self.Public.pile = []
 				num_cards = self.Public.current_cards
 				self.Public.current_cards = 0
 				self.Public.players[t].score_cards += num_cards
 				self.Public.remove = True
 			if self.Public.players[t].done is not None:
 				continue
-			if self.Public.current[1] == 0 and self.Public.players[t].cards == 1 and self.Private[t].hand[JOKER] > 0:
+			if self.Public.current.num == 0 and self.Public.players[t].cards == 1 and self.Private[t].hand[JOKER] > 0:
 				self.Public.players[t].blocked = True
 			elif not self.Public.players[t].blocked:
 				break
@@ -346,13 +349,13 @@ class Game: # {{{
 			num += 1
 			mosquito = False
 			card = MOSQUITO
-		if num == 1 and card == MOSQUITO and self.Public.current[0] != MOSQUITO:
+		if num == 1 and card == MOSQUITO and self.Public.current.card != MOSQUITO:
 			assert mosquito is False
 			num = 0
 			card = ELEPHANT
 			mosquito = True
 		extra = (1 if mosquito else 0) + (1 if joker else 0)
-		public_extra = (1 if self.Public.current[2] else 0) + (1 if self.Public.current[3] else 0)
+		public_extra = (1 if self.Public.current.mosquito else 0) + (1 if self.Public.current.joker else 0)
 		player = self.players[player_num]
 		target = self.Public.players[player_num].partner[0]
 		while True:
@@ -397,12 +400,12 @@ class Game: # {{{
 			if mosquito and new_mosquito or joker and new_joker:
 				self.reply(_('Only one extra mosquito is allowed'))
 				continue
-			if new_card == self.Public.current[0]:
-				if num + new_num + extra + new_extra != self.Public.current[1] + public_extra + 1:
+			if new_card == self.Public.current.card:
+				if num + new_num + extra + new_extra != self.Public.current.num + public_extra + 1:
 					self.reply(_('Together you must play one more card of the same type than are on the table'))
 					continue
 			else:
-				if num + new_num + extra + new_extra != self.Public.current[1] + public_extra:
+				if num + new_num + extra + new_extra != self.Public.current.num + public_extra:
 					self.reply(_('Together you must play the same number of cards as are on the table'))
 					continue
 			# Accepted.
@@ -453,8 +456,8 @@ class Game: # {{{
 			self.Public.players[p].cards -= 2
 			who.remove(p)
 			if self.Public.players[p].partner[0] is None:
-				self.Private[p].pile[args[0]] += 1
-				self.Private[p].pile[args[1]] += 1
+				self.Private[p].pile.append(args[0])
+				self.Private[p].pile.append(args[1])
 				self.Public.players[p].score_cards += 2
 			else:
 				partner = self.Public.players[p].partner
