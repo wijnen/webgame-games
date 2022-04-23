@@ -1,1 +1,1 @@
-../../python-webgame/webgame_client.py
+../../webgame/webgame_client.py
